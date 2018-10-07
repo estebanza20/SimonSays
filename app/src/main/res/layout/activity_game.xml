@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".GameActivity">
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="top"
+        android:stretchColumns="*"
+        app:layout_constraintBottom_toTopOf="@+id/start_game"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/character1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:cropToPadding="false"
+                android:onClick="characterOnClickHandle"
+                app:srcCompat="@drawable/kirby_icon"
+                tools:layout_editor_absoluteX="203dp"
+                tools:layout_editor_absoluteY="170dp" />
+
+            <ImageView
+                android:id="@+id/character2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="characterOnClickHandle"
+                app:srcCompat="@drawable/bowser_icon"
+                tools:layout_editor_absoluteX="52dp"
+                tools:layout_editor_absoluteY="170dp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/character5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="characterOnClickHandle"
+                app:srcCompat="@drawable/meta_knight_icon" />
+
+            <ImageView
+                android:id="@+id/character6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="characterOnClickHandle"
+                app:srcCompat="@drawable/mario_icon" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/character3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="characterOnClickHandle"
+                app:srcCompat="@drawable/luigi_icon" />
+
+            <ImageView
+                android:id="@+id/character4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="characterOnClickHandle"
+                app:srcCompat="@drawable/link_icon" />
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:id="@+id/start_game"
+        android:layout_width="260dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/md_grey_500"
+        android:onClick="startGameOnClickHandle"
+        android:text="@string/start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableLayout" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="135dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/tableLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/score_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CURRENT SCORE: " />
+
+        <TextView
+            android:id="@+id/score_val"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="80dp"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginRight="80dp"
+        android:layout_marginBottom="128dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/ssbb_one"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="56dp"
+                android:layout_marginTop="12dp"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ssbb_one" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/ssbb_three"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ssbb_three" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/ssbb_two"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ssbb_two" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="64dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ssbb_go"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/ssbb_go" />
+    </RelativeLayout>
+
+</android.support.constraint.ConstraintLayout>
