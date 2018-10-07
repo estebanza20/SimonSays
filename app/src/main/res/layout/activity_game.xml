@@ -95,13 +95,18 @@
 
     <Button
         android:id="@+id/start_game"
-        android:layout_width="260dp"
+        android:layout_width="0dp"
         android:layout_height="50dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
         android:layout_marginBottom="16dp"
         android:background="@color/md_grey_500"
         android:onClick="startGameOnClickHandle"
         android:text="@string/start"
+        android:textColor="@color/md_text_white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,14 +133,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="CURRENT SCORE: " />
+            android:text="CURRENT SCORE: "
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/score_val"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="0" />
+            android:text="0"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

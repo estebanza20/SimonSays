@@ -20,7 +20,7 @@
         </activity>
         <activity
             android:name=".GameActivity"
-            android:label="Game Activity"
+            android:label="Game"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".MainActivity">
             <meta-data
@@ -29,7 +29,7 @@
         </activity>
         <activity
             android:name=".HighScoresActivity"
-            android:label="High Scores Activity"
+            android:label="High Scores"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

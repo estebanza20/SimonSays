@@ -1,5 +1,6 @@
 package com.example.ezamoraa.simondice;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +34,8 @@ public class GameActivity extends AppCompatActivity {
     private static final Float THEME_VOLUME_H = 0.3f;
     private static final Float THEME_VOLUME_L = 0.05f;
 
+    private static final Integer MAX_HIGH_SCORES_NUM = 5;
+
     private GameStateMachine game_fsm;
 
     public enum GameState {
@@ -54,6 +57,7 @@ public class GameActivity extends AppCompatActivity {
         // Player Sequence
         private List<ImageView> player_sequence;
         private ImageView player_seq_iv;
+        private Integer current_score;
 
         // Game Start Sequence
         private List<ImageView> start_sequence;
@@ -72,6 +76,51 @@ public class GameActivity extends AppCompatActivity {
             cpu_sequence = new ArrayList<>();
             player_sequence = new ArrayList<>();
             updatePlayerCurrentScore();
+        }
+
+        // Game opening sequence
+        // ----------------------------------------------------------------------------------------
+        private void startGameOpeningSequence() {
+            if (state == GameState.STOP_STATE) {
+                state = GameState.GAME_START_STATE;
+                start_sequence = Arrays.asList(
+                        (ImageView) findViewById(R.id.ssbb_three),
+                        (ImageView) findViewById(R.id.ssbb_two),
+                        (ImageView) findViewById(R.id.ssbb_one),
+                        (ImageView) findViewById(R.id.ssbb_go)
+                );
+                start_sounds = Arrays.asList(
+                        R.raw.narrator_three,
+                        R.raw.narrator_two,
+                        R.raw.narrator_one,
+                        R.raw.narrator_go
+                );
+
+                start_it = 0;
+                theme_mp.setVolume(THEME_VOLUME_L, THEME_VOLUME_L);
+
+                startGameOpeningStep();
+            }
+        }
+
+        private void startGameOpeningStep() {
+            start_sequence.get(start_it).setVisibility(View.VISIBLE);
+
+            mp = MediaPlayer.create(GameActivity.this, start_sounds.get(start_it));
+            mp.setLooping(false);
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer m) {
+                    m.release();
+                    start_sequence.get(start_it).setVisibility(View.INVISIBLE);
+                    if (++start_it < start_sequence.size()) {
+                        startGameOpeningStep();
+                    } else {
+                        theme_mp.setVolume(THEME_VOLUME_H, THEME_VOLUME_H);
+                        startCpuSequence();
+                    }
+                }
+            });
+            mp.start();
         }
 
         // CPU sequence
@@ -138,7 +187,7 @@ public class GameActivity extends AppCompatActivity {
         private void startPlayerStep(ImageView iv) {
             if (state == GameState.PLAYER_TURN_STATE) {
                 // Force stop previous player step
-                mp.release();
+                if (mp != null) mp.release();
                 if (player_seq_iv != null) {
                     player_seq_iv.setImageAlpha(INACTIVE_ALPHA);
                 }
@@ -165,25 +214,65 @@ public class GameActivity extends AppCompatActivity {
         }
 
         private void startGameOverSequence() {
-            Integer player_score = player_sequence.size();
-            String text = "GAME OVER\nFinal Score: " + String.valueOf(player_score);
+            // Show final score and Game Over message
+            String text = "GAME OVER\nFinal Score: " + String.valueOf(current_score);
             Toast toast = Toast.makeText(GameActivity.this, text, Toast.LENGTH_LONG);
             toast.show();
 
+            // Play failure sound
+            MediaPlayer game_over_mp = MediaPlayer.create(
+                    GameActivity.this, R.raw.narrator_failure
+            );
+            game_over_mp.setLooping(false);
+            game_over_mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer m) { m.release(); }
+            });
+            game_over_mp.start();
+
             // If score is high-score, store it
-            updatePlayerHighScores(player_score);
+            updatePlayerHighScores();
 
             // Reset FSM
             reset();
         }
 
         private void updatePlayerCurrentScore() {
+            current_score = player_sequence.size();
             TextView tv = findViewById(R.id.score_val);
-            tv.setText(String.valueOf(player_sequence.size()));
+            tv.setText(String.valueOf(current_score));
         }
 
-        private void updatePlayerHighScores(Integer player_score) {
+        private void updatePlayerHighScores() {
+            SharedPreferences hs_prefs = getSharedPreferences(
+                    getResources().getString(R.string.hs_prefs), 0
+            );
 
+            List<Integer> high_scores = new ArrayList<>();
+
+            // Read current high-scores
+            Integer hs_num = hs_prefs.getInt(getResources().getString(R.string.hs_num), 0);
+            for (int i=0; i<hs_num; i++) {
+                high_scores.add(hs_prefs.getInt(String.valueOf(i),0));
+            }
+
+            // Check if player score is new high-score
+            if (high_scores.size() == 0 || current_score >= Collections.min(high_scores)) {
+                high_scores.add(current_score);
+                Collections.sort(high_scores, Collections.reverseOrder());
+
+                // Update high-scores
+                SharedPreferences.Editor editor = hs_prefs.edit();
+
+                hs_num = Math.min(high_scores.size(), MAX_HIGH_SCORES_NUM);
+                editor.remove(getResources().getString(R.string.hs_num));
+                editor.putInt(getResources().getString(R.string.hs_num), hs_num);
+
+                for(int i=0; i<hs_num; i++) {
+                    editor.remove(String.valueOf(i));
+                    editor.putInt(String.valueOf(i), high_scores.get(i));
+                }
+                editor.apply();
+            }
         }
 
         private Boolean playerSequenceIsValid() {
@@ -193,7 +282,7 @@ public class GameActivity extends AppCompatActivity {
             return true;
         }
 
-        public Boolean playerSequenceIsComplete() {
+        private Boolean playerSequenceIsComplete() {
             return playerSequenceIsValid() && (player_sequence.size() == cpu_sequence.size());
         }
 
@@ -222,51 +311,6 @@ public class GameActivity extends AppCompatActivity {
             start_button.setText(text);
             start_button.setBackgroundColor(bg_color);
             start_button.setTextColor(text_color);
-        }
-
-        // Game opening sequence
-        // ----------------------------------------------------------------------------------------
-        private void startGameOpeningSequence() {
-            if (state == GameState.STOP_STATE) {
-                state = GameState.GAME_START_STATE;
-                start_sequence = Arrays.asList(
-                        (ImageView) findViewById(R.id.ssbb_three),
-                        (ImageView) findViewById(R.id.ssbb_two),
-                        (ImageView) findViewById(R.id.ssbb_one),
-                        (ImageView) findViewById(R.id.ssbb_go)
-                );
-                start_sounds = Arrays.asList(
-                        R.raw.narrator_three,
-                        R.raw.narrator_two,
-                        R.raw.narrator_one,
-                        R.raw.narrator_go
-                );
-
-                start_it = 0;
-                theme_mp.setVolume(THEME_VOLUME_L, THEME_VOLUME_L);
-
-                startGameOpeningStep();
-            }
-        }
-
-        private void startGameOpeningStep() {
-            start_sequence.get(start_it).setVisibility(View.VISIBLE);
-
-            mp = MediaPlayer.create(GameActivity.this, start_sounds.get(start_it));
-            mp.setLooping(false);
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer m) {
-                    m.release();
-                    start_sequence.get(start_it).setVisibility(View.INVISIBLE);
-                    if (++start_it < start_sequence.size()) {
-                        startGameOpeningStep();
-                    } else {
-                        theme_mp.setVolume(THEME_VOLUME_H, THEME_VOLUME_H);
-                        startCpuSequence();
-                    }
-                }
-            });
-            mp.start();
         }
     }
 
@@ -374,7 +418,7 @@ public class GameActivity extends AppCompatActivity {
 
         for (int i=0; i<characters.size() && i<rand_icons.size(); i++) {
             ImageView iv = characters.get(i);
-            Integer icon = icons.get(i);
+            Integer icon = rand_icons.get(i);
             iv.setImageAlpha(INACTIVE_ALPHA);
             iv.setImageResource(icon);
             characters_icon.put(iv, icon);

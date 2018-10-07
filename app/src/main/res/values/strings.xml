@@ -1,6 +1,8 @@
 <resources>
-    <string name="app_name">SimonDice</string>
+    <string name="app_name">SimonSays (Brawl)</string>
     <string name="start">START</string>
     <string name="cpu">CPU TURN</string>
     <string name="player">PLAYER TURN</string>
+    <string name="hs_prefs">HighScoresPrefsFile</string>
+    <string name="hs_num">HS_NUM</string>
 </resources>
